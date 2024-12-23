@@ -214,6 +214,37 @@ test('If the enum is not found, error occurs', () => {
   expect(mouse).toThrow(EnumNotFound)
 })
 
+test.each([
+  'constructor',
+  '__proto__',
+  'hasOwnProperty',
+  'isPrototypeOf',
+  'toLocaleString',
+  'toString',
+  'valueOf',
+])('Cannot find enum with Object default method names', (value) => {
+  // given
+  class Animal extends ClassEnum<Animal> {
+    public static readonly DOG = new Animal('DOG', 'my dog')
+    public static readonly CAT = new Animal('CAT', 'my cat')
+
+    readonly title!: string
+
+    public constructor(value: string, title: string) {
+      super(value)
+      this.title = title
+    }
+  }
+
+  // when
+  const defaultMethods = () => {
+    Animal.valueOf(value)
+  }
+
+  // expected
+  expect(defaultMethods).toThrow(EnumNotFound)
+})
+
 test('Returns ETC if specified defaultValue in valueOf', () => {
   // given
   class Animal extends ClassEnum<Animal> {
