@@ -222,7 +222,7 @@ test.each([
   'toLocaleString',
   'toString',
   'valueOf',
-])('Cannot find enum with Object default method names', (value) => {
+])('throws EnumNotFound when value is Object prototype method name', (value) => {
   // given
   class Animal extends ClassEnum<Animal> {
     public static readonly DOG = new Animal('DOG', 'my dog')
