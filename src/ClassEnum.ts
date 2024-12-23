@@ -9,13 +9,12 @@ export default abstract class ClassEnum<T> {
 
   public static values<T>(): T[] {
     const enums = this.getEnums<T>()
-    return Object.keys(enums).map(function (name) {
-      return enums[name]
-    })
+    return Array.from(enums.values())
   }
 
-  private static getEnums<T>(): { [index: string]: T } {
-    const classEnums: { [index: string]: T } = {}
+  private static getEnums<T>(): Map<string, T> {
+    const classEnums: Map<string, T> = new Map()
+
     for (const name of Object.getOwnPropertyNames(this)) {
       if (name === 'prototype') {
         continue
@@ -27,7 +26,7 @@ export default abstract class ClassEnum<T> {
       }
 
       // @ts-ignore
-      classEnums[name] = descriptor.value
+      classEnums.set(name, descriptor.value)
     }
 
     return classEnums
@@ -35,13 +34,13 @@ export default abstract class ClassEnum<T> {
 
   public static valueOf<T>(value: string, defaultEnum: T | null = null): T {
     const enums = this.getEnums<T>()
-    if (!(value in enums)) {
+    if (!enums.has(value)) {
       if (defaultEnum !== null) {
         return defaultEnum
       }
       throw new EnumNotFound(value)
     }
-    return enums[value]
+    return enums.get(value)!
   }
 
   public name(): string {
